@@ -6,6 +6,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/Character.h"
+#include "InputActionValue.h"
 #include "MyThirdPersonChar.generated.h"
 
 UCLASS()
@@ -14,10 +15,19 @@ class PROGRAMMINGLEARNING_API AMyThirdPersonChar : public ACharacter
 	GENERATED_BODY()
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,Category = MyTps_Cam, meta = (AllowPrivateAccess = "true"))
-	class USpringArmComponent* CameraBoom;
+	USpringArmComponent* CameraBoom;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = MyTps_Cam, meta = (AllowPrivateAccess = "true"))
-	class UCameraComponent* FollowCamera;
+	UCameraComponent* FollowCamera;
+
+	UPROPERTY(EditAnywhere, Category = Input)
+	class UInputMappingContext* IC_Character;
+
+	UPROPERTY(EditAnywhere, Category = Input)
+	class UInputAction* IA_Move;
+
+	UPROPERTY(EditAnywhere, Category = Input)
+	class UInputAction* IA_Jump;
 
 
 public:
@@ -27,6 +37,8 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	void Move(const FInputActionValue& Value);
 
 public:	
 	// Called every frame
