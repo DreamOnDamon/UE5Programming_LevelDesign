@@ -31,8 +31,15 @@ AMyThirdPersonChar::AMyThirdPersonChar()
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
 	CameraBoom->SocketOffset = FVector(0.f, 0.f, 55.f);
-	CameraBoom->TargetArmLength = 500.f;
-	CameraBoom->bUsePawnControlRotation = true;
+	CameraBoom->TargetArmLength = 900.f;
+	CameraBoom->SetRelativeRotation(FRotator(-70.f, 0.f, 0.f));
+	CameraBoom->bUsePawnControlRotation = false;
+	CameraBoom->bInheritPitch = false;
+	CameraBoom->bInheritRoll = false;
+	CameraBoom->bInheritYaw = false;
+	CameraBoom->bEnableCameraLag = true;
+	CameraBoom->CameraLagSpeed = 2.5f;
+	CameraBoom->CameraLagMaxDistance = 125.f;
 
 	// Create a camera that will follow the character. 
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
@@ -66,14 +73,14 @@ void AMyThirdPersonChar::Move(const FInputActionValue& Value) {
 
 void AMyThirdPersonChar::Look(const FInputActionValue& Value)
 {
-	FVector2D InputValue = Value.Get<FVector2D>();
+	/*FVector2D InputValue = Value.Get<FVector2D>();
 
 	if (InputValue.X != 0.f) {
 		AddControllerYawInput(InputValue.X);
 	}
 	if (InputValue.Y != 0.f) {
 		AddControllerPitchInput(InputValue.Y);
-	}
+	}*/
 }
 
 void AMyThirdPersonChar::BeginWalking()
@@ -114,7 +121,7 @@ void AMyThirdPersonChar::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 		EnhancedPlayerInputComponent->BindAction(IA_Move, ETriggerEvent::Triggered, this, &AMyThirdPersonChar::Move);
 		EnhancedPlayerInputComponent->BindAction(IA_Jump, ETriggerEvent::Started, this, &ACharacter::Jump);
 		EnhancedPlayerInputComponent->BindAction(IA_Jump, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
-		EnhancedPlayerInputComponent->BindAction(IA_Look, ETriggerEvent::Triggered, this, &AMyThirdPersonChar::Look);
+		//EnhancedPlayerInputComponent->BindAction(IA_Look, ETriggerEvent::Triggered, this, &AMyThirdPersonChar::Look);
 		EnhancedPlayerInputComponent->BindAction(IA_Walk, ETriggerEvent::Started, this, &AMyThirdPersonChar::BeginWalking);
 		EnhancedPlayerInputComponent->BindAction(IA_Walk, ETriggerEvent::Completed, this, &AMyThirdPersonChar::StopWalking);
 	}
