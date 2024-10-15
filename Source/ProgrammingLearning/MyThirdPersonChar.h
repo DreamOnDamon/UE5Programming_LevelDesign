@@ -29,6 +29,11 @@ class PROGRAMMINGLEARNING_API AMyThirdPersonChar : public ACharacter
 	UPROPERTY(EditAnywhere, Category = Input)
 	class UInputAction* IA_Jump;
 
+	UPROPERTY(EditAnywhere, Category = Input)
+	class UInputAction* IA_Look;
+
+	UPROPERTY(EditAnywhere, Category = Input)
+	class UInputAction* IA_Walk;
 
 public:
 	// Sets default values for this character's properties
@@ -39,6 +44,12 @@ protected:
 	virtual void BeginPlay() override;
 
 	void Move(const FInputActionValue& Value);
+
+	void Look(const FInputActionValue& Value);
+
+	void BeginWalking();
+
+	void StopWalking();
 
 public:	
 	// Called every frame
