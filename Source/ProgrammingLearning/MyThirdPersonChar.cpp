@@ -59,7 +59,9 @@ void AMyThirdPersonChar::BeginPlay()
 void AMyThirdPersonChar::Move(const FInputActionValue& Value) {
 	FVector2D InputValue = Value.Get<FVector2D>();
 	if (Controller != nullptr && (InputValue.X != 0.f || InputValue.Y != 0.f)) {
+
 		const FRotator YawRotation(0,Controller->GetControlRotation().Yaw, 0);
+		
 		if (InputValue.X != 0.f) {
 			const FVector RightDirection = UKismetMathLibrary::GetRightVector(YawRotation);
 			AddMovementInput(RightDirection, InputValue.X);

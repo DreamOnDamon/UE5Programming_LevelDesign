@@ -4,12 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Components/SceneComponent.h"
 #include "EnemyCharacter.generated.h"
 
 UCLASS()
 class PROGRAMMINGLEARNING_API AEnemyCharacter : public ACharacter
 {
 	GENERATED_BODY()
+
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category = LookAt, meta = (AllowPrivateAccess = "true"))
+	USceneComponent* SightSource;
 
 public:
 	// Sets default values for this character's properties

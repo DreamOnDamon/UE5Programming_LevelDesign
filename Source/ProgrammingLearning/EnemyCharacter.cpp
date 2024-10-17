@@ -14,6 +14,9 @@ AEnemyCharacter::AEnemyCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	SightSource = CreateDefaultSubobject<USceneComponent>(TEXT("SightSource"));
+	SightSource->SetupAttachment(RootComponent);
+
 }
 
 // Called when the game starts or when spawned
@@ -41,16 +44,25 @@ bool AEnemyCharacter::CanSeeActor(const AActor* TargetActor) const
 	if (TargetActor == nullptr) return false;
 
 	FHitResult Hit;
-	FVector TraceLocationStart = GetActorLocation();
+	FVector TraceLocationStart = SightSource->GetComponentLocation();
 	FVector TraceLocationEnd = TargetActor->GetActorLocation();
 
-	ECollisionChannel Channel = ECollisionChannel::ECC_Visibility;
+	ECollisionChannel Channel = ECollisionChannel::ECC_GameTraceChannel1;
 	FCollisionQueryParams QueryParams;
 	QueryParams.AddIgnoredActor(this);
 	QueryParams.AddIgnoredActor(TargetActor);
 	GetWorld()->LineTraceSingleByChannel(Hit, TraceLocationStart, TraceLocationEnd, Channel, QueryParams);
 
 	DrawDebugLine(GetWorld(), TraceLocationStart, TraceLocationEnd, FColor::Red);
+
+	/*FQuat Rotation = FQuat::Identity;
+	FCollisionShape Shape = FCollisionShape::MakeBox(FVector(20.f, 20.f, 20.f));
+	GetWorld()->SweepSingleByChannel(Hit,
+		TraceLocationStart,
+		TraceLocationEnd,
+		Rotation,
+		Channel,
+		Shape);*/
 
 	return !Hit.bBlockingHit;
 }
