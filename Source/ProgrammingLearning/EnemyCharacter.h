@@ -15,7 +15,19 @@ class PROGRAMMINGLEARNING_API AEnemyCharacter : public ACharacter
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category = LookAt, meta = (AllowPrivateAccess = "true"))
 	USceneComponent* SightSource;
 
+	FTimerHandle ThrowTimerHandle;
+
+	float ThrowingInterval = 2.f;
+
+	float ThrowingDelay = 1.f;
+
+	bool bCanSeeActor = false;
+	bool bCanSeeActorPrevious = false;
+
 public:
+	// A class used to spawn a dodgeball object
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Dogedball)
+	TSubclassOf<class ADodgeball> DodgeballClass;
 	// Sets default values for this character's properties
 	AEnemyCharacter();
 
@@ -23,9 +35,11 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	void LookAtActor(AActor* TargetActor);
+	bool LookAtActor(AActor* TargetActor);
 
 	bool CanSeeActor(const AActor* TargetActor) const;
+
+	void ThrowDodgaball();
 
 public:	
 	// Called every frame

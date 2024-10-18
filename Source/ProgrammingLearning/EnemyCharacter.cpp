@@ -7,6 +7,8 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "TimerManager.h"
+#include "Dodgeball.h"
 
 // Sets default values
 AEnemyCharacter::AEnemyCharacter()
@@ -26,17 +28,20 @@ void AEnemyCharacter::BeginPlay()
 	
 }
 
-void AEnemyCharacter::LookAtActor(AActor* TargetActor)
+bool AEnemyCharacter::LookAtActor(AActor* TargetActor)
 {
-	if (TargetActor == nullptr) return;
+	if (TargetActor == nullptr) return false;
+
 	if (CanSeeActor(TargetActor)) {
 		FVector Start = GetActorLocation();
 		FVector End = TargetActor->GetActorLocation();
-
 		FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(Start, End);
 		SetActorRotation(LookAtRotation);
+
+		return true;
 	 }
 
+	return false;
 }
 
 bool AEnemyCharacter::CanSeeActor(const AActor* TargetActor) const
@@ -67,12 +72,33 @@ bool AEnemyCharacter::CanSeeActor(const AActor* TargetActor) const
 	return !Hit.bBlockingHit;
 }
 
+void AEnemyCharacter::ThrowDodgaball()
+{
+	if (DodgeballClass == nullptr) return;
+	FVector ForwardVector = GetActorForwardVector();
+	float SpawnDistance = 40.f;
+	FVector SpawnLocation = GetActorLocation() + ForwardVector * SpawnDistance;
+	GetWorld()->SpawnActor<ADodgeball>(DodgeballClass, SpawnLocation, GetActorRotation());
+}
+
 // Called every frame
 void AEnemyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	ACharacter* PlayerCharacter = UGameplayStatics::GetPlayerCharacter(this, 0);
-	LookAtActor(PlayerCharacter);
+	bCanSeeActor = LookAtActor(PlayerCharacter);
+	if (bCanSeeActor != bCanSeeActorPrevious) {
+		if (bCanSeeActor) {
+			// Start throwing dodgeball towards player
+			GetWorldTimerManager().SetTimer(ThrowTimerHandle, this, &AEnemyCharacter::ThrowDodgaball,
+				ThrowingInterval, true, ThrowingDelay);
+		}
+		else {
+			// Otherwise stop throwing dodgeball
+			GetWorldTimerManager().ClearTimer(ThrowTimerHandle);
+		}
+	}
+	bCanSeeActorPrevious = bCanSeeActor;
 }
 
 // Called to bind functionality to input
