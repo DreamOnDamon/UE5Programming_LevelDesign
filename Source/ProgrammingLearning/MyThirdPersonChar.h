@@ -7,6 +7,7 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
+#include "HealthComponent.h"
 #include "MyThirdPersonChar.generated.h"
 
 UCLASS()
@@ -34,6 +35,8 @@ class PROGRAMMINGLEARNING_API AMyThirdPersonChar : public ACharacter
 
 	UPROPERTY(EditAnywhere, Category = Input)
 	class UInputAction* IA_Walk;
+
+	class UHealthComponent* HealthComponent;
 
 public:
 	// Sets default values for this character's properties

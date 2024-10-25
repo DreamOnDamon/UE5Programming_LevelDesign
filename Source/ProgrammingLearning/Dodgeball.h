@@ -17,9 +17,15 @@ class PROGRAMMINGLEARNING_API ADodgeball : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Dodgeball, meta = (AllowPrivateAccess = "true"))
 	class UProjectileMovementComponent* ProjectileMovement;
 
+protected:
+	UPROPERTY(EditAnywhere, Category = Damage)
+	float Damage = 34.f;
+
 public:
 	// Sets default values for this character's properties
 	ADodgeball();
+
+	FORCEINLINE class UProjectileMovementComponent* GetProjectileMovementComponent() { return ProjectileMovement; }
 
 protected:
 	// Called when the game starts or when spawned

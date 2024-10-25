@@ -6,6 +6,8 @@
 #include "Dodgeball.h"
 #include "MyThirdPersonChar.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/KismetStringLibrary.h"
+#include "Engine/Engine.h"
 
 
 // Sets default values
@@ -22,11 +24,13 @@ AVictoryBox::AVictoryBox()
 	CollisionBox->SetBoxExtent(FVector(60.f, 60.f, 60.f));
 	CollisionBox->SetRelativeLocation(FVector(0.f, 0.f, 120.f));
 
-	CollisionBox->OnComponentBeginOverlap.__Internal_AddDynamic(this, &AVictoryBox::OnBeginOverlap, FName("OnBeginOverlap"));
+	CollisionBox->OnComponentBeginOverlap.AddDynamic(this, &AVictoryBox::OnBeginOverlap);
+	//FName("OnBeginOverlap")
 }
 
 void AVictoryBox::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+
 	if (Cast<AMyThirdPersonChar>(OtherActor)) {
 		UKismetSystemLibrary::QuitGame(
 			GetWorld(),
@@ -34,19 +38,18 @@ void AVictoryBox::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* Ot
 			EQuitPreference::Quit,
 			true);
 	}
+
 }
 
 // Called when the game starts or when spawned
 void AVictoryBox::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame
 void AVictoryBox::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 

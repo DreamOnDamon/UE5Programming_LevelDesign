@@ -4,6 +4,7 @@
 #include "Dodgeball.h"
 #include "Components/SphereComponent.h"
 #include "MyThirdPersonChar.h"
+#include "HealthComponent.h"
 #include "GameFrameWork/ProjectileMovementComponent.h"
 
 // Sets default values
@@ -50,7 +51,14 @@ void ADodgeball::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 
 void ADodgeball::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	if (Cast<AMyThirdPersonChar>(OtherActor) != nullptr) {
+	AMyThirdPersonChar* Player = Cast<AMyThirdPersonChar>(OtherActor);
+	if (Player != nullptr)
+	{
+		UHealthComponent* HealthComponent = Player->FindComponentByClass<UHealthComponent>();
+		if (HealthComponent != nullptr)
+		{
+			HealthComponent->LoseHealth(Damage);
+		}
 		Destroy();
 	}
 }
