@@ -3,12 +3,11 @@
 
 #include "EnemyCharacter.h"
 #include "Engine/World.h"
-#include "Kismet/KismetMathLibrary.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "TimerManager.h"
 #include "Dodgeball.h"
-#include "DodgeballFunctionLibrary.h"
+#include "LookAtActorComponent.h"
 #include "GameFrameWork/ProjectileMovementComponent.h"
 
 // Sets default values
@@ -17,8 +16,8 @@ AEnemyCharacter::AEnemyCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	SightSource = CreateDefaultSubobject<USceneComponent>(TEXT("SightSource"));
-	SightSource->SetupAttachment(RootComponent);
+	LookAtActorComponent = CreateDefaultSubobject<ULookAtActorComponent>(TEXT("LookAtActorComponent"));
+	LookAtActorComponent->SetupAttachment(RootComponent);
 
 }
 
@@ -26,54 +25,11 @@ AEnemyCharacter::AEnemyCharacter()
 void AEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	ACharacter* PlayerCharacter = UGameplayStatics::GetPlayerCharacter(this, 0);
+	LookAtActorComponent->SetTarget(PlayerCharacter);
 	
 }
-
-bool AEnemyCharacter::LookAtActor(AActor* TargetActor)
-{
-	if (TargetActor == nullptr) return false;
-
-	TArray<const AActor*> IgnoreActors = {this, TargetActor};
-
-	if (UDodgeballFunctionLibrary::CanSeeActor(GetWorld(), SightSource->GetComponentLocation(), TargetActor,IgnoreActors)){
-		FVector Start = GetActorLocation();
-		FVector End = TargetActor->GetActorLocation();
-		FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(Start, End);
-		SetActorRotation(LookAtRotation);
-
-		return true;
-	 }
-
-	return false;
-}
-
-//bool AEnemyCharacter::CanSeeActor(const AActor* TargetActor) const
-//{
-//	if (TargetActor == nullptr) return false;
-//
-//	FHitResult Hit;
-//	FVector TraceLocationStart = SightSource->GetComponentLocation();
-//	FVector TraceLocationEnd = TargetActor->GetActorLocation();
-//
-//	ECollisionChannel Channel = ECollisionChannel::ECC_GameTraceChannel1;
-//	FCollisionQueryParams QueryParams;
-//	QueryParams.AddIgnoredActor(this);
-//	QueryParams.AddIgnoredActor(TargetActor);
-//	GetWorld()->LineTraceSingleByChannel(Hit, TraceLocationStart, TraceLocationEnd, Channel, QueryParams);
-//
-//	DrawDebugLine(GetWorld(), TraceLocationStart, TraceLocationEnd, FColor::Red);
-
-	/*FQuat Rotation = FQuat::Identity;
-	FCollisionShape Shape = FCollisionShape::MakeBox(FVector(20.f, 20.f, 20.f));
-	GetWorld()->SweepSingleByChannel(Hit,
-		TraceLocationStart,
-		TraceLocationEnd,
-		Rotation,
-		Channel,
-		Shape);*/
-//
-//	return !Hit.bBlockingHit;
-//}
 
 void AEnemyCharacter::ThrowDodgaball()
 {
@@ -81,7 +37,6 @@ void AEnemyCharacter::ThrowDodgaball()
 	FVector ForwardVector = GetActorForwardVector();
 	float SpawnDistance = 40.f;
 	FVector SpawnLocation = GetActorLocation() + ForwardVector * SpawnDistance;
-	//GetWorld()->SpawnActor<ADodgeball>(DodgeballClass, SpawnLocation, GetActorRotation())
 
 	// The tansform use to spawn the actor(Rotation, Location).
 	FTransform SpawnTransform = FTransform(GetActorRotation(), SpawnLocation);
@@ -98,8 +53,7 @@ void AEnemyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	ACharacter* PlayerCharacter = UGameplayStatics::GetPlayerCharacter(this, 0);
-	bCanSeeActor = LookAtActor(PlayerCharacter);
+	bCanSeeActor = LookAtActorComponent->CanSeeTarget();
 	if (bCanSeeActor != bCanSeeActorPrevious) { // If CanSee state is different from the last tick
 		if (bCanSeeActor) {
 			// Start throwing dodgeball towards player

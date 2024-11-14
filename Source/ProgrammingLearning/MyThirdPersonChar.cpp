@@ -9,7 +9,9 @@
 #include "InputMappingContext.h"
 #include "InputAction.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "GameFramework/Controller.h"
+#include "DodgeballPlayerController.h"
 
 // Sets default values
 AMyThirdPersonChar::AMyThirdPersonChar()
@@ -41,6 +43,13 @@ AMyThirdPersonChar::AMyThirdPersonChar()
 	CameraBoom->CameraLagSpeed = 2.5f;
 	CameraBoom->CameraLagMaxDistance = 125.f;
 
+	// Enhanced input sysytem initilization
+	IA_Jump = nullptr;
+	IA_Look = nullptr;
+	IA_Move = nullptr;
+	IA_Walk = nullptr;
+	IC_Character = nullptr;
+
 	// Create a camera that will follow the character. 
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom,USpringArmComponent::SocketName);
@@ -48,6 +57,25 @@ AMyThirdPersonChar::AMyThirdPersonChar()
 
 	// Create the health component for character
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
+}
+
+void AMyThirdPersonChar::OnDeath_Implementation()
+{
+	//UKismetSystemLibrary::QuitGame(this, nullptr, EQuitPreference::Quit, true);
+	ADodgeballPlayerController* PlayerController = Cast<ADodgeballPlayerController>(GetController());
+	if (PlayerController != nullptr)
+	{
+		PlayerController->ShowRestartWidget();
+	}
+}
+
+void AMyThirdPersonChar::OnTakeDamage_Implementation()
+{
+	ADodgeballPlayerController* PlayerController = Cast<ADodgeballPlayerController>(GetController());
+	if (PlayerController != nullptr)
+	{
+		PlayerController->UpdateHealthPercent(HealthComponent->GetHealthPercent());
+	}
 }
 
 // Called when the game starts or when spawned

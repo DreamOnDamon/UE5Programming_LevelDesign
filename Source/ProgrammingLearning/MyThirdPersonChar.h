@@ -8,10 +8,11 @@
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
 #include "HealthComponent.h"
+#include "HealthInterface.h"
 #include "MyThirdPersonChar.generated.h"
 
 UCLASS()
-class PROGRAMMINGLEARNING_API AMyThirdPersonChar : public ACharacter
+class PROGRAMMINGLEARNING_API AMyThirdPersonChar : public ACharacter, public IHealthInterface
 {
 	GENERATED_BODY()
 
@@ -41,6 +42,10 @@ class PROGRAMMINGLEARNING_API AMyThirdPersonChar : public ACharacter
 public:
 	// Sets default values for this character's properties
 	AMyThirdPersonChar();
+
+	virtual void OnDeath_Implementation() override;
+
+	virtual void OnTakeDamage_Implementation() override;
 
 protected:
 	// Called when the game starts or when spawned

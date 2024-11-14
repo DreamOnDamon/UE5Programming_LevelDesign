@@ -9,7 +9,8 @@
 bool UDodgeballFunctionLibrary :: CanSeeActor(const UWorld* World,
 	FVector Location,
 	const AActor* TargetActor,
-	TArray<const AActor*> IgnoreActors) {
+	TArray<const AActor*> IgnoreActors) 
+{
 	if (TargetActor == nullptr) return false;
 
 	FHitResult Hit;

@@ -3,33 +3,35 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/ActorComponent.h"
-#include "HealthComponent.generated.h"
+#include "Components/SceneComponent.h"
+#include "LookAtActorComponent.generated.h"
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class PROGRAMMINGLEARNING_API UHealthComponent : public UActorComponent
+class PROGRAMMINGLEARNING_API ULookAtActorComponent : public USceneComponent
 {
 	GENERATED_BODY()
 
-protected:
-	float Health = 100.f;
-
 public:	
 	// Sets default values for this component's properties
-	UHealthComponent();
+	ULookAtActorComponent();
 
-	void LoseHealth(float Amount);
+	FORCEINLINE void SetTarget(AActor* NewTarget) { TargetActor = NewTarget; }
 
-	FORCEINLINE float GetHealthPercent() const { return Health / 100.f; }
+	FORCEINLINE bool CanSeeTarget() const { return bCanSeeActor; }
 
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
+	bool LookAtActor();
+
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+protected:
+	AActor* TargetActor;
+	bool bCanSeeActor = false;
 		
 };

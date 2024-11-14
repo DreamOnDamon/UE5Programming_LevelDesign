@@ -55,10 +55,8 @@ void ADodgeball::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimit
 	if (Player != nullptr)
 	{
 		UHealthComponent* HealthComponent = Player->FindComponentByClass<UHealthComponent>();
-		if (HealthComponent != nullptr)
-		{
-			HealthComponent->LoseHealth(Damage);
-		}
+		if (HealthComponent != nullptr) HealthComponent->LoseHealth(Damage);
+		
 		Destroy();
 	}
 }

@@ -7,6 +7,7 @@
 #include "MyThirdPersonChar.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/KismetStringLibrary.h"
+#include "Kismet/GameplayStatics.h"
 #include "Engine/Engine.h"
 
 
@@ -33,8 +34,8 @@ void AVictoryBox::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* Ot
 
 	if (Cast<AMyThirdPersonChar>(OtherActor)) {
 		UKismetSystemLibrary::QuitGame(
-			GetWorld(),
-			nullptr,
+			GetWorld(), 
+			UGameplayStatics::GetPlayerController(GetWorld(), 0),
 			EQuitPreference::Quit,
 			true);
 	}

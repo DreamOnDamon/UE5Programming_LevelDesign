@@ -13,7 +13,8 @@ class PROGRAMMINGLEARNING_API AEnemyCharacter : public ACharacter
 	GENERATED_BODY()
 
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category = LookAt, meta = (AllowPrivateAccess = "true"))
-	USceneComponent* SightSource;
+	
+	class ULookAtActorComponent* LookAtActorComponent;
 
 	FTimerHandle ThrowTimerHandle;
 
@@ -35,7 +36,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	bool LookAtActor(AActor* TargetActor);
+	//bool LookAtActor(AActor* TargetActor);
 
 	//bool CanSeeActor(const AActor* TargetActor) const;
 
